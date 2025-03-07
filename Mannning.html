@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Parameter Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('bg3.webp'); /* Replace with actual image URL */
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .back{
+            text-decoration: none;
+            color: #f4f4f4;
+            font-size: large;
+            font-weight: bolder;
+            border: 2px solid white;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #00c0ff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: #f4f4f4;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00c0ff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #009ac7;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('parameterForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const length = parseFloat(document.getElementById('length').value) || null;
+                const mean = parseFloat(document.getElementById('mean').value) || null;
+                const velocity = parseFloat(document.getElementById('velocity').value) || null;
+                const headLoss = parseFloat(document.getElementById('headLoss').value) || null;
+                const coeff = parseFloat(document.getElementById('coeff').value) || null;
+
+                //const g = 9.81; // gravitational constant
+
+                let result;
+                //velocity, area, 
+                if (!headLoss && length && mean && velocity && coeff) {
+                    // Calculate Head Loss
+                    //area = Math.PI * Math.pow(diameter / 2, 2);
+                    //velocity = velocity / area;
+                    result = (Math.pow(coeff,2)*Math.pow(velocity, 2)* length)/(Math.pow(mean,4/3));
+                    document.getElementById('result').innerText = `Calculated Head Loss: ${result.toFixed(2)} m`;
+
+                }
+                 else if (!coeff && length && velocity && headLoss && mean) {
+                    // Calculate coeff
+                    //velocity = velocity / (Math.PI * Math.pow(diameter / 2, 2));
+                    result=(Math.pow(headloss,1/2)*Math.pow(mean,2/3))/(velocity*Math.pow(length,1/2));
+                    document.getElementById('result').innerText = `Calculated Mannnings Rugosity Coefficient: ${result.toFixed(4)} m`;
+
+                } else if (!mean && length && coeff && velocity && headLoss) {
+                    // Calculate mean
+                    //area = Math.PI * Math.pow(diameter / 2, 2);
+                    //velocity = velocity / area;
+                    result = (Math.pow(coeff,2/3)*Math.pow(velocity,2/3)*Math.pow(length,4/3))/(Math.pow(headloss,4/3));
+                    document.getElementById('result').innerText = `Calculated Hydraulic MeanDepth: ${result.toFixed(3)}`;
+
+                } else if (!velocity && length && coeff && headLoss && mean) {
+                    // Calculate Flow Rate
+                    //velocity = Math.sqrt((2 * g * headLoss * diameter) / (frictionFactor * length));
+                    //area = Math.PI * Math.pow(diameter / 2, 2);
+                    result = (Math.pow(headLoss,1/2)*Math.pow(mean,2/3))/(coeff*Math.pow(length,1/2));
+                    document.getElementById('result').innerText = `Calculated Flow Rate: ${result.toFixed(3)} m³/s`;
+
+                } else if (!length && velocity && coeff && headLoss && mean) {
+                    // Calculate Length of the Pipe
+                    //velocity = Math.sqrt((2 * g * headLoss * diameter) / (frictionFactor * length));
+                    //area = Math.PI * Math.pow(diameter / 2, 2);
+                    result = (headLoss*Math.pow(mean,4/3))/(Math.pow(coeff,2)*Math.pow(velocity,2));
+                    document.getElementById('result').innerText = `Calculated Flow Rate: ${result.toFixed(3)} m³/s`;
+
+                }
+                else {
+                    document.getElementById('result').innerText = 'Please provide at least four values.';
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back"><--Back</a>
+        <h1>Mannning's Method</h1>
+        <form id="parameterForm">
+            <div>
+                <label for="length">Length of the Pipe (m):</label>
+                <input type="number" id="length">
+            </div>
+            <div>
+                <label for="mean">Hydraulic MeanDepth:</label>
+                <input type="number" id="mean">
+            </div>
+            <div>
+                <label for="velocity">Flow velocity:</label>
+                <input type="number" id="velocity">
+            </div>
+            <div>
+                <label for="coeff">Mannning Rugosity Coefficient:</label>
+                <input type="number" id="coeff">
+            </div>
+            <div>
+                <label for="headLoss">Head Loss (m):</label>
+                <input type="number" id="headLoss">
+            </div>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+</body>
+
+</html>

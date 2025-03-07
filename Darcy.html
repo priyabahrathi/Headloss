@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Parameter Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('bg3.webp'); /* Replace with actual image URL */
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .back{
+            text-decoration: none;
+            color: #f4f4f4;
+            font-size: large;
+            font-weight: bolder;
+            border: 2px solid white;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #00c0ff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: #f4f4f4;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00c0ff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #009ac7;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('parameterForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const length = parseFloat(document.getElementById('length').value) || null;
+                const diameter = parseFloat(document.getElementById('diameter').value) || null;
+                const flowRate = parseFloat(document.getElementById('flowRate').value) || null;
+                const headLoss = parseFloat(document.getElementById('headLoss').value) || null;
+                const frictionFactor = parseFloat(document.getElementById('frictionFactor').value) || null;
+
+                const g = 9.81; // gravitational constant
+
+                let velocity, area, result;
+
+                if (!headLoss && length && diameter && flowRate && frictionFactor) {
+                    // Calculate Head Loss
+                    area = Math.PI * Math.pow(diameter / 2, 2);
+                    velocity = flowRate / area;
+                    result = (frictionFactor * length * Math.pow(velocity, 2)) / (2 * g * diameter);
+                    document.getElementById('result').innerText = `Calculated Head Loss: ${result.toFixed(2)} m`;
+
+                }
+                 else if (!diameter && length && flowRate && headLoss && frictionFactor) {
+                    // Calculate Diameter
+                    velocity = flowRate / (Math.PI * Math.pow(diameter / 2, 2));
+                    result = Math.sqrt((frictionFactor * length * Math.pow(velocity, 2)) / (2 * g * headLoss));
+                    document.getElementById('result').innerText = `Calculated Diameter: ${result.toFixed(4)} m`;
+
+                } else if (!frictionFactor && length && diameter && flowRate && headLoss) {
+                    // Calculate Friction Factor
+                    area = Math.PI * Math.pow(diameter / 2, 2);
+                    velocity = flowRate / area;
+                    result = (2 * g * headLoss * diameter) / (length * Math.pow(velocity, 2));
+                    document.getElementById('result').innerText = `Calculated Friction Factor: ${result.toFixed(3)}`;
+
+                } else if (!flowRate && length && diameter && headLoss && frictionFactor) {
+                    // Calculate Flow Rate
+                    velocity = Math.sqrt((2 * g * headLoss * diameter) / (frictionFactor * length));
+                    area = Math.PI * Math.pow(diameter / 2, 2);
+                    result = velocity * area;
+                    document.getElementById('result').innerText = `Calculated Flow Rate: ${result.toFixed(3)} m³/s`;
+
+                } else if (!length && flowRate && diameter && headLoss && frictionFactor) {
+                    // Calculate Length of the Pipe
+                    velocity = Math.sqrt((2 * g * headLoss * diameter) / (frictionFactor * length));
+                    area = Math.PI * Math.pow(diameter / 2, 2);
+                    result = (headLoss*diameter*2*g)/(frictionFactor*Math.pow(velocity,2));
+                    document.getElementById('result').innerText = `Calculated Length of the Pipe: ${result.toFixed(3)} m³/s`;
+
+                }
+                else {
+                    document.getElementById('result').innerText = 'Please provide at least four values.';
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back"><--Back</a>
+        <h1>Pipe Parameter Calculator</h1>
+        <form id="parameterForm">
+            <div>
+                <label for="length">Pipe Length (m):</label>
+                <input type="number" id="length">
+            </div>
+            <div>
+                <label for="diameter">Pipe Diameter (m):</label>
+                <input type="number" id="diameter" step="0.0001">
+            </div>
+            <div>
+                <label for="flowRate">Flow Rate (m³/s):</label>
+                <input type="number" id="flowRate" step="0.01">
+            </div>
+            <div>
+                <label for="headLoss">Head Loss (m):</label>
+                <input type="number" id="headLoss" step="0.01">
+            </div>
+            <div>
+                <label for="frictionFactor">Friction Factor (Darcy-Weisbach):</label>
+                <input type="number" id="frictionFactor" step="0.001">
+            </div>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+</body>
+
+</html>

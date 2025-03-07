@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Parameter Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('bg3.webp'); /* Replace with actual image URL */
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .back{
+            text-decoration: none;
+            color: #f4f4f4;
+            font-size: large;
+            font-weight: bolder;
+            border: 2px solid white;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #00c0ff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: #f4f4f4;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00c0ff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #009ac7;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('parameterForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const length = parseFloat(document.getElementById('length').value) || null;
+                const diameter = parseFloat(document.getElementById('diameter').value) || null;
+                const volflowrate = parseFloat(document.getElementById('volflowrate').value) || null;
+                const headLoss = parseFloat(document.getElementById('headLoss').value) || null;
+                const roughcoeff = parseFloat(document.getElementById('roughcoeff').value) || null;
+
+                //const g = 9.81; // gravitational constant
+
+                let result;
+                // velocity, area,
+                if (!headLoss && length && diameter && volflowrate && roughcoeff) {
+                    // Calculate Head Loss
+                   // area = Math.PI * Math.pow(diameter / 2, 2);
+                    //velocity = volflowrate / area;
+                    result = (0.208*length*Math.pow(volflowrate,1.852))/(Math.pow(roughcoeff,1.852)*Math.pow(diameter,4.87));
+                    document.getElementById('result').innerText = `Calculated Head Loss: ${result.toFixed(2)} m`;
+
+                }
+                 else if (!diameter && length && volflowrate && headLoss && roughcoeff) {
+                    // Calculate Diameter
+                    //velocity = volflowrate / (Math.PI * Math.pow(diameter / 2, 2));
+                    result = (Math.pow(0.208,1/4.87)*Math.pow(length,1/4.87)*Math.pow(volflowrate,1.852/4.87))/(Math.pow(roughcoeff,1.852/4.87)*Math.pow(headLoss,1/4.87));
+                    document.getElementById('result').innerText = `Calculated Diameter: ${result.toFixed(4)} m`;
+
+                } else if (!volflowrate && length && diameter && roughcoeff && headLoss) {
+                    // Calculate Volumetric FlowRate
+                    //area = Math.PI * Math.pow(diameter / 2, 2);
+                    //velocity = volflowrate / area;
+                    result = (Math.pow(headLoss,1/1.852)*roughcoeff*Math.pow(diameter,4.87/1.852)) / (Math.pow(0.208,1/1.852)*Math.pow(length,1/1.852));
+                    document.getElementById('result').innerText = `Calculated Volumetric FlowRate: ${result.toFixed(3)}`;
+
+                } else if (!roughcoeff && length && diameter && headLoss && volflowrate) {
+                    // Calculate Pipe Roughness Coefficient
+                    //velocity = Math.sqrt((2 * g * headLoss * diameter) / (roughcoeff * length));
+                    //area = Math.PI * Math.pow(diameter / 2, 2);
+                    result = (Math.pow(0.208,1/1.852)*Math.pow(length,1.852)*volflowrate)/(Math.pow(headLoss,1/1.852)*Math.pow(4.87/1.852));
+                    document.getElementById('result').innerText = `Calculated Pipe Roughness Coefficient: ${result.toFixed(3)} `;
+
+                } else if (!length && roughcoeff && diameter && headLoss && volflowrate) {
+                    // Calculate Length of the Pipe
+                    //velocity = Math.sqrt((2 * g * headLoss * diameter) / (roughcoeff * length));
+                    //area = Math.PI * Math.pow(diameter / 2, 2);
+                    result = (headLoss*Math.pow(roughcoeff,1.852)*Math.pow(diameter,4.87))/(0.208*Math.pow(volflowrate,1.852));
+                    document.getElementById('result').innerText = `Calculated Pipe Roughness Coefficient: ${result.toFixed(3)}`;
+
+                }
+                
+                else {
+                    document.getElementById('result').innerText = 'Please provide at least four values.';
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back"><--Back</a>
+        <h1>Hazen Williams Method</h1>
+        <form id="parameterForm">
+            <div>
+                <label for="length">Pipe Length (m):</label>
+                <input type="number" id="length">
+            </div>
+            <div>
+                <label for="diameter">Pipe Diameter (m):</label>
+                <input type="number" id="diameter" step="0.0001">
+            </div>
+            <div>
+                <label for="volflowrate">Volumetric Flow Rate:</label>
+                <input type="number" id="volflowrate" step="0.01">
+            </div>
+            
+            <div>
+                <label for="roughcoeff">Roughness Coefficient:</label>
+                <input type="number" id="roughcoeff" step="0.001">
+            </div>
+
+            <div>
+                <label for="headLoss">Head Loss (m):</label>
+                <input type="number" id="headLoss" step="0.01">
+            </div>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+</body>
+
+</html>

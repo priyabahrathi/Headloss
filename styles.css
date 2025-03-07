@@ -1,0 +1,26 @@
+.back{
+    background-image: url('bg3.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+header{
+    text-align: center;
+    font-size: 50px;
+}
+.menu-box{
+    border: 2px solid black;
+    margin-left: 400px;
+    margin-right: 400px;
+    text-align: center;
+    line-height: 55px;
+    border-radius: 20px;
+    padding: 20px;
+}
+.back .menu-box .method1,.method2,.method3,.method4 {
+    text-decoration: none;
+    color: black;
+    border: 2px solid black;
+    font-size: 30px;
+    border-radius: 15px;
+    padding: 5px;
+}
